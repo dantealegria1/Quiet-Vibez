@@ -1,9 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Audio } from 'expo-av';
 import { Feather } from '@expo/vector-icons';
 
-const ACCESS_TOKEN='sl.u.AFY3EXVqFGmVK6FsZqiEW-ZRYuuYHIUYm-VFQP0vWo9GMDhAXIiDTzEx3f3aGuxQ-7CGg1BY5C9rKV3whJ-yGXzu8ZNPtzLQh84blUHbHAC-m8gBD6VHD_RndOxpAvwj42lJxtR02jWxNGZJI0uSfvcWQYXy-mtE5mLN3AMTpVGSill2XAwME-z5EXqf10aSmN5MLGLyx3_-0_FnSD_omiNHlmGDno3CTU5_LqpV6SO-kiIFXiH1SC_LAUDJj4nfEm-UOOJXnjN3SEwyyy2vABxR4HdeNqqD2isUSyPjr5aHdMRJDQ0_ydz3vOTpRpd8KGIs103hfXFW1tELl0aIxEIDCZ1KDKvcTxqXh6ume6cJr_5CcwS1GcJaA27I1_WEHSbw2hMD88AO2qo34tftnIveZaRQaV3TvahefCtAbTUeB-ut6cDNGhwlPrIBs6kZD-fDBJMlRYpqJP9nDmh_tdddRs5MKRJgQ1jFUj_MkR6tk1l1PJy1K5z3MDucq3twx1ocx34y5lsj7wyFnX0_--Fev1y_glP4A9MkXZuzp_DdZGtt3-ZBrhI59ruP7pTgzbuoSDvn8FWU-ToMmQCCEWedgCPnlXm-bxAJFNh_yCYEyVooDPOGtY5_tJfQ9w_v4i-E6UKQY3GJHQQgXv9tWinOZvNi1XSUw0fEYdWH22KmLknF0tfUwrSUhQHB5_cO9YB7t5Fyy-IflNmdLUj7rkf0vNKiNdIEfGouxGgx2xXfsbyFVXIu4OxIGXYaqE8-RDw3RDaKR_MViXZ3Xunjuaa25vH_nY7EvHMu-f-BcY07jUuWKtKbRaEkoBdrY3xDW6uziq1lq9ZXgXc7a1qXkHflWiV3Rl8Q1hem53Hg14RmY_e9hwrCq99bDObHAhHkeerf4CCU-tMjhb71okyWSouDqAu3QFvzy-8S3Sjstch9MURdtPsn3--E2RDp3XPVA2agve-MSGXPYpyPu_A2s3WJD5v1zfNpXAC8N6pCjWFf3bgRfnA4OWqLcLGbzYBDX859XiyifzRqUPjwZwIfT8YF4i0hZdA0BESyWQaswqWN9wDwWQ18QlVP-ypzYsUoXJwCGjzJidpPfUZfNS7RGLo6wk3FhNna-JRnE3NIRtS6DMvRhO1T0FAuIcbYuXdQ9I4nU-qhzaQnGLrG-ajHiG7hVXGXICdpk6zLwWjYJhsh8aQchiJBycNjsjQ0bgytBCCtU2JWQPMMCpho6-hBGHK70dSdDranCQT0hiRuBVqGS2Zp-NkB_JgvcnSTaxXeRtUS2ewWXWhx8_eFL9XUWCsBEsUCEVamOUkr3Z-nJJ1mpcLY-20bWBZMo14B4Wv4cXR8eIY_IAdMkOOaIOaQRYDbLGJ8DisJSkh125_CbS3CyBItRPmf-hK5ZvaRAORjHjnjLBvoFkMiOwerAN0W1PVNYQqGde2H6ioLp8-LObYHcQ'
+const ACCESS_TOKEN = 
+ 
 
 const App = () => {
   const [sound, setSound] = useState(null);
@@ -16,6 +18,9 @@ const App = () => {
   const [isRepeatOn, setIsRepeatOn] = useState(false);
   const [isShuffleOn, setIsShuffleOn] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showPomodoro, setShowPomodoro] = useState(false); // New state for Pomodoro
+  const [showInfo, setShowInfo] = useState(false); // New state for Info modal
+  const [pomodoroTime, setPomodoroTime] = useState(25 * 60); // Default 25-minute Pomodoro
 
   useEffect(() => {
     const fetchMusicFiles = async () => {
@@ -23,7 +28,7 @@ const App = () => {
         const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
           method: 'POST',
           headers: {
-            Authorization: 'Bearer ${ACCESS_TOKEN}',
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ path: '' }),
@@ -58,7 +63,7 @@ const App = () => {
       const response = await fetch('https://api.dropboxapi.com/2/files/get_temporary_link', {
         method: 'POST',
         headers: {
-         Authorization: 'Bearer ${ACCESS_TOKEN}',
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ path }),
@@ -157,8 +162,7 @@ const App = () => {
         >
           {selectedMusic && (
             <View style={styles.songInfo}>
-              <Text style={[styles.songTitle, isDarkMode && styles.textDark]}>{selectedMusic}</Text>
-              <Text style={[styles.artistName, isDarkMode && styles.textDark]}>Music Library</Text>
+              <Text style={[styles.songTitle, isDarkMode && styles.textDark]}>{selectedMusic}</Text> 
             </View>
           )}
           
@@ -375,11 +379,10 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   modalContainerDark: {
-    backgroundColor: 'rgba(0,0,0,0.7)',
+
   },
   modalContent: {
     backgroundColor: '#fff',
@@ -431,4 +434,5 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 });
-export default App;
+
+export default App
