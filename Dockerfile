@@ -2,12 +2,12 @@
 FROM node:18-alpine
 
 # Set the working directory
-WORKDIR /Ruido
+WORKDIR /
 
 # Copy the package.json and package-lock.json files to the container
 
-COPY Ruido/package.json ./
-COPY Ruido/package-lock.json ./
+COPY package.json ./
+COPY package-lock.json ./
 
 # Install dependencies
 RUN npm install
