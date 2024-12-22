@@ -25,8 +25,8 @@ jobs:
     # Step 3: Build Docker Image
     - name: Build Docker Image
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/Ruido_Blanco:${{ github.sha }} \
-                     -t ghcr.io/${{ github.repository_owner }}/Ruido_Blanco:latest .
+        docker build -t ghcr.io/${{ github.repository_owner }}/ruido_blanco:${{ github.sha }} \
+                     -t ghcr.io/${{ github.repository_owner }}/ruido_blanco:latest .
 
     # Step 4: Push Docker Image
     - name: Push Docker Image
