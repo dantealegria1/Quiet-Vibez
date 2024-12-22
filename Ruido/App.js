@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Audio } from 'expo-av';
@@ -6,7 +5,6 @@ import { Feather } from '@expo/vector-icons';
 
 const ACCESS_TOKEN = 
  
-
 const App = () => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
