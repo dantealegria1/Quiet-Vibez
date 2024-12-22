@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@expo/metro-runtime": "~4.0.0",
     "dropbox": "^10.34.0",
     "expo": "~52.0.19",
@@ -24,4 +25,15 @@
     "@babel/core": "^7.20.0"
   },
   "private": true
+=======
+    "expo": "^52.0.21",
+    "react-dom": "18.3.1",
+    "react-native-web": "~0.19.13",
+    "@expo/metro-runtime": "~4.0.0"
+  },
+  "scripts": {
+    "start": "expo start",
+    "build": "expo build:web"
+  }
+>>>>>>> 112b246c7479cbe5ef9aa80960ac4de90e5a5a51
 }
