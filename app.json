@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "Ruido",
-    "slug": "Ruido",
+    "name": "Quiet Vibes",
+    "slug": "Quiet VIbes",
     "extra": {
       "ACCESS_TOKEN": "sl.CDLjne-2iARUG4EVD5KiEpNqk_owtPKJk_7wYApdm6zorTPNdDUDpHoOOcIP3xVosad5dpWi11aiKb5RzA7vLXlJO1InrXXslEuq1Nbcsa46Nf-SgPsLtS9NYHP8zhhSwPc8FVHHGpmN"
     },
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/water.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/water.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,12 +20,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/water.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/water.png"
     }
   }
 }
