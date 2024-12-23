@@ -4,9 +4,8 @@ import { Audio } from 'expo-av';
 import { Feather } from '@expo/vector-icons';
 
 import Constants from 'expo-constants';
-
 const ACCESS_TOKEN = Constants.manifest.extra.ACCESS_TOKEN;
- 
+
 const App = () => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
