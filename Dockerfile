@@ -10,13 +10,13 @@ COPY package.json ./
 COPY package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install -g expo
 
 # Copy the entire project directory to the container
 COPY . .
 
 # Expose the port your app runs on (default for Metro Bundler is 8081)
-EXPOSE 8080
+EXPOSE 8081
 
 # Start the React Native development server
 CMD ["npm", "start"]
