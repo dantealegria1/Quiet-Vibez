@@ -26,7 +26,7 @@ jobs:
 
     # Step 4: Build the project
     - name: Build Project
-      run: npx expo export:web
+      run: npx expo build:web
 
     # Step 5: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
