@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import { Feather } from '@expo/vector-icons';
 
 import Constants from 'expo-constants';
-const ACCESS_TOKEN = Constants.manifest.extra.ACCESS_TOKEN;
+const ACCESS_TOKEN = 'sl.CDIup4XW3XBsz0vFielGyEFfe_YWBNGTpoU7YxLBrsFwB3xuRCiE4jgxFRjciMFQImzRv_gGs5XnMIs8N_5OwZygPAGPtws0eoskU2kmV3W9yQgdaU-m4AKHbw7BhYsu54mS6DvUHITd'
 
 const App = () => {
   const [sound, setSound] = useState(null);
