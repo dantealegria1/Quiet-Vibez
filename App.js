@@ -1,95 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Audio } from 'expo-av';
 import { Feather } from '@expo/vector-icons';
 
-import Constants from 'expo-constants';
-const ACCESS_TOKEN = 'sl.CDITzLYEeE-3Z7f8EYv6EGljd_lYioM0U6EHzdHUpiz-g3WC-krANCsQemC-9YYSvb58aCqXc5Kp0qOplV_nzkEZl9mXxHqxF83BiKQyXFvAA2QAhN_llVKk4xS0N2RJygvgLndPqJIp'
-
-const App = () => {
+const NoisePlayer = () => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [musicFiles, setMusicFiles] = useState([]);
-  const [selectedMusic, setSelectedMusic] = useState(null);
-  const [showMusicList, setShowMusicList] = useState(false);
-  const [isPlayerVisible, setIsPlayerVisible] = useState(true);
+  const [selectedNoise, setSelectedNoise] = useState(null);
+  const [showNoiseList, setShowNoiseList] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isRepeatOn, setIsRepeatOn] = useState(false);
+  const [isPlayerVisible, setIsPlayerVisible] = useState(true);
+  const [noiseFiles, setNoiseFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRepeatOn, setIsRepeatOn] = useState(true);
   const [isShuffleOn, setIsShuffleOn] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showPomodoro, setShowPomodoro] = useState(false); // New state for Pomodoro
-  const [showInfo, setShowInfo] = useState(false); // New state for Info modal
-  const [pomodoroTime, setPomodoroTime] = useState(25 * 60); // Default 25-minute Pomodoro
+
+  const GITHUB_API_URL = 'https://api.github.com/repos/dantealegria1/Ruido_Blanco/contents/Noises';
+  const RAW_CONTENT_BASE_URL = 'https://raw.githubusercontent.com/dantealegria1/Ruido_Blanco/main/Noises/';
 
   useEffect(() => {
-    const fetchMusicFiles = async () => {
-      try {
-        const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ path: '' }),
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch music files');
-
-        const data = await response.json();
-        const mp3Files = data.entries.filter(
-          (file) => file['.tag'] === 'file' && file.name.endsWith('.mp3')
-        );
-        setMusicFiles(mp3Files);
-      } catch (error) {
-        console.error('Error fetching music files:', error);
-      }
-    };
-
-    fetchMusicFiles();
+    fetchNoiseFiles();
     return () => {
-      if (sound) sound.unloadAsync();
+      if (sound) {
+        sound.unloadAsync();
+      }
     };
   }, []);
 
-  const togglePlayerVisibility = () => {
-    setIsPlayerVisible(!isPlayerVisible);
-  };
-
-  const playSound = async (path, index) => {
+  const fetchNoiseFiles = async () => {
     try {
-      if (sound) await sound.unloadAsync();
-
-      const response = await fetch('https://api.dropboxapi.com/2/files/get_temporary_link', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ path }),
-      });
-
-      const linkData = await response.json();
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: linkData.link },
-        { shouldPlay: true },
-        onPlaybackStatusUpdate
-      );
-
-      setSound(newSound);
-      setIsPlaying(true);
-      setCurrentIndex(index);
+      const response = await fetch(GITHUB_API_URL);
+      const data = await response.json();
+      
+      const mp3Files = data
+        .filter(file => file.name.toLowerCase().endsWith('.mp3'))
+        .map(file => ({
+          name: file.name.replace('.mp3', ''),
+          url: `${RAW_CONTENT_BASE_URL}${encodeURIComponent(file.name)}`
+        }));
+      
+      setNoiseFiles(mp3Files);
+      setIsLoading(false);
     } catch (error) {
-      console.error('Error playing sound:', error);
+      console.error('Error fetching noise files:', error);
+      setIsLoading(false);
     }
   };
 
-  const onPlaybackStatusUpdate = async (status) => {
-    if (status.didJustFinish) {
-      if (isRepeatOn) {
-        await playSound(musicFiles[currentIndex].path_lower, currentIndex);
-      } else {
-        handleSkipForward();
+  const loadAndPlaySound = async (noiseUrl) => {
+    try {
+      if (sound) {
+        await sound.unloadAsync();
       }
+      
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: noiseUrl },
+        { shouldPlay: true, isLooping: isRepeatOn }
+      );
+      
+      setSound(newSound);
+      setIsPlaying(true);
+    } catch (error) {
+      console.error('Error loading sound:', error);
     }
   };
 
@@ -104,34 +76,34 @@ const App = () => {
     }
   };
 
-  const handleSkipForward = () => {
-    let nextIndex;
-    if (isShuffleOn) {
-      nextIndex = Math.floor(Math.random() * musicFiles.length);
-    } else {
-      nextIndex = (currentIndex + 1) % musicFiles.length;
+  const handleSkipForward = async () => {
+    if (noiseFiles.length > 0) {
+      const currentIndex = noiseFiles.findIndex(noise => noise.name === selectedNoise);
+      const nextIndex = (currentIndex + 1) % noiseFiles.length;
+      const nextNoise = noiseFiles[nextIndex];
+      setSelectedNoise(nextNoise.name);
+      await loadAndPlaySound(nextNoise.url);
     }
-    const nextSong = musicFiles[nextIndex];
-    setSelectedMusic(nextSong.name.replace('.mp3', ''));
-    playSound(nextSong.path_lower, nextIndex);
   };
 
-  const handleSkipBack = () => {
-    let prevIndex;
-    if (isShuffleOn) {
-      prevIndex = Math.floor(Math.random() * musicFiles.length);
-    } else {
-      prevIndex = (currentIndex - 1 + musicFiles.length) % musicFiles.length;
+  const handleSkipBack = async () => {
+    if (noiseFiles.length > 0) {
+      const currentIndex = noiseFiles.findIndex(noise => noise.name === selectedNoise);
+      const prevIndex = (currentIndex - 1 + noiseFiles.length) % noiseFiles.length;
+      const prevNoise = noiseFiles[prevIndex];
+      setSelectedNoise(prevNoise.name);
+      await loadAndPlaySound(prevNoise.url);
     }
-    const prevSong = musicFiles[prevIndex];
-    setSelectedMusic(prevSong.name.replace('.mp3', ''));
-    playSound(prevSong.path_lower, prevIndex);
   };
 
-  const handleMusicSelection = (music, index) => {
-    setSelectedMusic(music.name.replace('.mp3', ''));
-    playSound(music.path_lower, index);
-    setShowMusicList(false);
+  const handleNoiseSelection = async (noise) => {
+    setSelectedNoise(noise.name);
+    setShowNoiseList(false);
+    await loadAndPlaySound(noise.url);
+  };
+
+  const togglePlayerVisibility = () => {
+    setIsPlayerVisible(!isPlayerVisible);
   };
 
   return (
@@ -159,16 +131,21 @@ const App = () => {
             isDarkMode && styles.playerContainerDark,
           ]}
         >
-          {selectedMusic && (
+          {selectedNoise && (
             <View style={styles.songInfo}>
-              <Text style={[styles.songTitle, isDarkMode && styles.textDark]}>{selectedMusic}</Text> 
+              <Text style={[styles.songTitle, isDarkMode && styles.textDark]}>{selectedNoise}</Text>
             </View>
           )}
           
           <View style={styles.controls}>
             <TouchableOpacity 
               style={[styles.controlButton, isDarkMode && styles.controlButtonDark]} 
-              onPress={() => setIsRepeatOn(!isRepeatOn)}
+              onPress={() => {
+                setIsRepeatOn(!isRepeatOn);
+                if (sound) {
+                  sound.setIsLoopingAsync(!isRepeatOn);
+                }
+              }}
             >
               <Feather name="repeat" size={20} color={isRepeatOn ? "#4a9f58" : (isDarkMode ? "#fff" : "#666")} />
             </TouchableOpacity>
@@ -203,45 +180,54 @@ const App = () => {
 
       <TouchableOpacity 
         style={[styles.libraryButton, isDarkMode && styles.libraryButtonDark]}
-        onPress={() => setShowMusicList(true)}
+        onPress={() => setShowNoiseList(true)}
       >
         <Feather name="music" size={20} color={isDarkMode ? "#fff" : "#666"} />
       </TouchableOpacity>
 
       <Modal
-        visible={showMusicList}
+        visible={showNoiseList}
         animationType="slide"
         transparent={true}
       >
         <View style={[styles.modalContainer, isDarkMode && styles.modalContainerDark]}>
           <View style={[styles.modalContent, isDarkMode && styles.modalContentDark]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, isDarkMode && styles.textDark]}>Music Library</Text>
+              <Text style={[styles.modalTitle, isDarkMode && styles.textDark]}>Noise Library</Text>
               <TouchableOpacity 
                 style={styles.closeButton}
-                onPress={() => setShowMusicList(false)}
+                onPress={() => setShowNoiseList(false)}
               >
                 <Feather name="x" size={24} color={isDarkMode ? "#fff" : "#666"} />
               </TouchableOpacity>
             </View>
             
             <ScrollView style={styles.list}>
-              {musicFiles.map((music, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.musicItem,
-                    isDarkMode && styles.musicItemDark,
-                    selectedMusic === music.name.replace('.mp3', '') && 
-                    (isDarkMode ? styles.selectedMusicDark : styles.selectedMusic),
-                  ]}
-                  onPress={() => handleMusicSelection(music, index)}
-                >
-                  <Text style={[styles.musicName, isDarkMode && styles.textDark]}>
-                    {music.name.replace('.mp3', '')}
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color={isDarkMode ? "#fff" : "#666"} />
+                  <Text style={[styles.loadingText, isDarkMode && styles.textDark]}>
+                    Loading noise files...
                   </Text>
-                </TouchableOpacity>
-              ))}
+                </View>
+              ) : (
+                noiseFiles.map((noise, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.musicItem,
+                      isDarkMode && styles.musicItemDark,
+                      selectedNoise === noise.name && 
+                      (isDarkMode ? styles.selectedMusicDark : styles.selectedMusic),
+                    ]}
+                    onPress={() => handleNoiseSelection(noise)}
+                  >
+                    <Text style={[styles.musicName, isDarkMode && styles.textDark]}>
+                      {noise.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              )}
             </ScrollView>
           </View>
         </View>
@@ -381,7 +367,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContainerDark: {
-
   },
   modalContent: {
     backgroundColor: '#fff',
@@ -432,6 +417,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#333',
+  },
 });
 
-export default App
+export default NoisePlayer;
