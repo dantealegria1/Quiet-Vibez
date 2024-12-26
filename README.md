@@ -41,13 +41,13 @@ npm start
 ### Docker Installation
 
 You can run the application using Docker:
-
+```bash
 # Pull the latest Docker image
 docker pull ghcr.io/dantealegria1/Quiet-Vibez:latest
 
 # Run the container
 docker run -p 3000:3000 ghcr.io/dantealegria1/Quiet-Vibez:latest
-
+```
 ## Usage
 
 - **Web Version**: Access through your browser at [https://dancing-dodol-946cf1.netlify.app/](https://dancing-dodol-946cf1.netlify.app/)
