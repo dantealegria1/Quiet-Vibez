@@ -24,7 +24,7 @@ Visit [https://dancing-dodol-946cf1.netlify.app/](https://dancing-dodol-946cf1.n
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/dantealegria1/Ruido_Blanco.git
+git clone https://github.com/dantealegria1/Quiet-Vibez.git
 cd Ruido_Blanco
 ```
 
@@ -42,13 +42,11 @@ npm start
 
 You can run the application using Docker:
 
-```bash
-# Pull the Docker image
-docker pull ghcr.io/dantealegria1/ruido_blanco:968f6dac5fd05606d5308710d5ac20d332237d95
+# Pull the latest Docker image
+docker pull ghcr.io/dantealegria1/Quiet-Vibez:latest
 
 # Run the container
-docker run -p 3000:3000 ghcr.io/dantealegria1/ruido_blanco:968f6dac5fd05606d5308710d5ac20d332237d95
-```
+docker run -p 3000:3000 ghcr.io/dantealegria1/Quiet-Vibez:latest
 
 ## Usage
 
@@ -101,8 +99,8 @@ Contributions are welcome! Feel free to:
 
 ## Repository
 
-- GitHub: [https://github.com/dantealegria1/Ruido_Blanco](https://github.com/dantealegria1/Ruido_Blanco)
-- Docker: [ghcr.io/dantealegria1/ruido_blanco](ghcr.io/dantealegria1/ruido_blanco)
+- GitHub: [https://github.com/dantealegria1/Ruido_Blanco](https://github.com/dantealegria1/Quiet-Vibez)
+- Docker: [ghcr.io/dantealegria1/ruido_blanco](ghcr.io/dantealegria1/Quiet-Vibez)
 
 ## License
 
